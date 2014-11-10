@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from random import randint
-from Tkinter import *
+from tkinter import *
 
 taille=70 #la taille de la matrice
 k=1 #On aura 1/(k+1) cellules en vie au depart
