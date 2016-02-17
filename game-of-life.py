@@ -3,24 +3,29 @@
 from random import randint
 from Tkinter import *
 
+# Configuration
 size=70
 k=1 # initialize 1/(k+1) live cells
 cellwidth=8
-time=150 # refresh time
+time=150 # refresh interval
+step=1 # evolution steps between two refresh
+
+# Global matrix
+matrix=None
 
 # Generate matrix
 def mat(): 
-    matrix=[]
+    mat=[]
     for i in range(size):
         line=[]
         for j in range(size):
             line.append(randint(0,k)==0) 
-        matrix.append(line)
-    return matrix
+        mat.append(line)
+    return mat
 
 # Evolve to next generation
 def evolution(m):
-    matrix=[]
+    mat=[]
     for i in range(size):
         line=[]
         for j in range(size):
@@ -33,61 +38,64 @@ def evolution(m):
             else: k=False
 
             line.append(k)
-        matrix.append(line)
-    return matrix
+        mat.append(line)
+    return mat
 
-class Window():
-    def __init__(self):
-        self.root=Tk()
-        self.root.wm_title("Conways's Game of Life")
-        self.step=1
+# Init a new matrix
+def newrun():
+    global matrix
+    matrix=mat()
 
-        # Menu
-        self.menu=Frame(self.root)
-        self.btnNew=Button(self.menu,text="New run",command=self.newrun)
-        self.btnPP=Button(self.menu,text="Play / Pause",command=self.pp)
-        self.btnQuit=Button(self.menu,text="Quit",command=self.root.quit)
-        self.can=Canvas(self.root, width=cellwidth*size, height=cellwidth*size, bg="#444334")
-        self.btnNew.pack(side="left")
-        self.btnPP.pack(side="left")
-        self.btnQuit.pack()
-        self.menu.pack()
-        self.can.pack()
+# Toggle Play/Pause
+def pp():
+    global step
+    if step==1:
+        step=0
+    else:
+        step=1
 
-        # Matrix
-        self.matrix=mat()
-        self.render()
-        self.root.after(time,self.animation)
-        self.root.mainloop()
+# Evolve each time steps
+def animation():
+    global matrix
+    for x in range(step):
+        matrix=evolution(matrix)
+    render()
+    root.after(time,animation)
 
-    # Init a new matrix
-    def newrun(self):
-        self.matrix=mat()
+# Render computation
+def render():
+    global matrix
+    can.delete(ALL)
+    x,y=0,0
+    for i in matrix:
+        for j in i:
+            if j: # Draw a live cell
+                can.create_rectangle(x,y,x+cellwidth,y+cellwidth,fill="#CF9130")
+            x+=cellwidth
+        y+=cellwidth
+        x=0
 
-    # Toggle Play/Pause
-    def pp(self):
-        if self.step==1:
-            self.step=0
-        else:
-            self.step=1
+# Main program
 
-    # Evolve each time steps
-    def animation(self):
-        for x in range(self.step):
-            self.matrix=evolution(self.matrix)
-        self.render()
-        self.root.after(time,self.animation)
+# Init window
+root=Tk()
+root.wm_title("Conways's Game of Life")
 
-    # Render computation
-    def render(self): 
-        self.can.delete(ALL)
-        x,y=0,0
-        for i in self.matrix:
-            for j in i:
-                if j: # Draw a live cell
-                    self.can.create_rectangle(x,y,x+cellwidth,y+cellwidth,fill="#CF9130")
-                x+=cellwidth
-            y+=cellwidth
-            x=0
+# Init menu
+menu=Frame(root)
+btnNew=Button(menu,text="New run",command=newrun)
+btnPP=Button(menu,text="Play / Pause",command=pp)
+btnQuit=Button(menu,text="Quit",command=root.quit)
+can=Canvas(root, width=cellwidth*size, height=cellwidth*size, bg="#444334")
+btnNew.pack(side="left")
+btnPP.pack(side="left")
+btnQuit.pack()
+menu.pack()
+can.pack()
 
-Window()
+# Matrix
+matrix=mat()
+render()
+root.after(time,animation)
+root.mainloop()
+
