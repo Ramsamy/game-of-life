@@ -1,16 +1,6 @@
 # Game of Life
 
-## Résumé
+A simple implementation of Conways's Game of Life.
 
-Un jeu de la vie écrit en Python.
-
-Utilise Tkinter pour l'affichage graphique.
-
-## Règles du jeu
-
-* Naissance : trois cellules autour d'une case vide font naître une cellule sur cette case.
-
-* Survie : une cellule voisine de deux ou trois cellules survit.
-
-* Mort : une cellule seule (isolement) ou entourée de quatre cellules (étouffement) meurt.
+More on [Wikipedia](https://en.wikipedia.org/wiki/Conway's_Game_of_Life)
 
